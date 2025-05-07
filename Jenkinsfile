@@ -1,19 +1,26 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'nextjs-app'
+    }
+
     stages {
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    echo 'Building the project...'
+                    echo 'Building Docker image for the Next.js app...'
+                    sh 'docker-compose build'
                 }
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
                 script {
-                    echo 'Running tests...'
+                    echo 'Running tests inside the Docker container...'
+                    // You can run your tests in a Docker container here, e.g., with 'docker exec'
+                    sh 'docker-compose run nextjs npm test'
                 }
             }
         }
@@ -21,7 +28,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo 'Deploying the project...'
+                    echo 'Deploying the Next.js app...'
+                    sh 'docker-compose up -d'
                 }
             }
         }
