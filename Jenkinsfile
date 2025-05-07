@@ -131,7 +131,6 @@ pipeline {
             when {
                 anyOf {
                     branch 'dev'
-                    branch 'dev-sophea'
                 }
             }
 
