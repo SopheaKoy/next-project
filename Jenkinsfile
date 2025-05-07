@@ -102,6 +102,17 @@
 pipeline {
     agent any
 
+
+    environment {
+        PORT="3000"
+        ENV="dev"
+        DB_USER="POSTGRES"
+        DB_NAME="POSTGRES"
+        DB_HOST="POSTGRES"
+        DB_PASS="POSTGRES"
+        DB_SSL="TRUE"
+    }
+
     stages {
         stage('Load ENV') {
             steps {
