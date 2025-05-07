@@ -102,33 +102,17 @@
 pipeline {
     agent any
 
-    environment {
-        CONFIG_FILE = credentials('test_config') // Injects file path
-    }
-
     stages {
-        stage('Load Properties') {
+        stage('Load Config') {
             steps {
-                script {
-                    echo "Reading properties from file..."
-
-                    def props = readProperties file: "${CONFIG_FILE}"
-
-                    // Set individual env vars if needed
-                    env.DB_HOST = props['db.host']
-                    env.DB_PORT = props['db.port']
-                    env.DB_USER = props['db.username']
-                    env.API_URL = props['api.url']
-                    env.MONITOR_ENABLED = props['monitor.enabled']
+                configFileProvider([configFile(fileId: 'test_config', variable: 'CONFIG_FILE')]) {
+                    script {
+                        // Now CONFIG_FILE is the path to the temp file
+                        def props = readProperties file: "${CONFIG_FILE}"
+                        echo "Database Host: ${props['db.host']}"
+                        echo "API URL: ${props['api.url']}"
+                    }
                 }
-            }
-        }
-
-        stage('Use Properties') {
-            steps {
-                echo "Database Host: ${env.DB_HOST}"
-                echo "API URL: ${env.API_URL}"
-                echo "Monitoring Enabled: ${env.MONITOR_ENABLED}"
             }
         }
     }
