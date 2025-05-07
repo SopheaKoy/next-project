@@ -101,45 +101,36 @@
 
 pipeline {
     agent any
-
-
-    environment {
-        PORT="3000"
-        ENV="dev"
-        DB_USER="POSTGRES"
-        DB_NAME="POSTGRES"
-        DB_HOST="POSTGRES"
-        DB_PASS="POSTGRES"
-        DB_SSL="TRUE"
-    }
-
     stages {
-        stage('Load ENV') {
+        stage('Deploy') {
             steps {
-                script {
-                    // Use the Secret file credential with ID 'env-config'
-                    withCredentials([file(credentialsId: 'env-config', variable: 'ENV_FILE')]) {
-                        // Do not expose the ENV_FILE directly in logs.
-                        echo "Loading environment variables from the file."
+                configFileProvider([configFile(fileId: '0c7f8326-8717-4be3-9e7c-818f1396b316', variable: 'ENV_CONFIG')]) {
+                    script {
+                        def props = readProperties file: "${ENV_CONFIG}"
+
+                        // Convert keys like db.host → db_host to make them valid shell variables
+                        def exportLines = props.collect { k, v -> "export ${k.replace('.', '_')}='${v}'" }.join('\n')
+
+                        // Write the export statements to a file
+                        writeFile file: 'export-env.sh', text: exportLines
+
+                        // Use the exported env variables in your shell script
                         sh '''
-                        # Use bash explicitly to ensure 'source' command works
-                        bash -c "set -a; source $ENV_FILE; set +a"
+                            source export-env.sh
+                            echo "Database Host: $db_host"
+                            echo "API URL: $api_url"
+                            echo "Monitoring Enabled: $monitor_enabled"
+
+                            ./deploy.sh \
+                              --db-host=$db_host \
+                              --db-user=$db_username \
+                              --schema=$db_schema \
+                              --api-url=$api_url \
+                              --api-version=$api_version
                         '''
                     }
                 }
             }
         }
-        
-        stage('Use ENV') {
-            steps {
-                script {
-                    // Now you can access the variables from the secret file
-                    echo "Environment variables loaded successfully."
-                    echo "Application: ${env.APPLICATION}" // Do not log sensitive information
-                    echo "DB User: ${env.DB_USER}"  // Avoid logging sensitive data
-                }
-            }
-        }
     }
 }
-
