@@ -122,7 +122,27 @@
 //         }
 //     }
 // }
+pipeline {
+    agent any
 
+    stages {
+        stage('Build') {
+            when {
+                anyOf {
+                    branch 'dev'
+                    branch 'dev-sophea'
+                }
+            }
+            steps {
+                script {
+                    echo "Building on branch: ${env.BRANCH_NAME}"
+                    // Your build steps
+                }
+            }
+        }
+        // Add more stages (Deploy, Notify) as needed
+    }
+}
 pipeline {
     agent any
 
