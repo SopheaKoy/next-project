@@ -104,30 +104,21 @@ pipeline {
     stages {
         stage('Deploy') {
             steps {
+                // Load the managed configuration file
                 configFileProvider([configFile(fileId: '0c7f8326-8717-4be3-9e7c-818f1396b316', variable: 'ENV_CONFIG')]) {
                     script {
+                        // Read the properties from the config file
                         def props = readProperties file: "${ENV_CONFIG}"
-
-                        // Convert keys like db.host → db_host to make them valid shell variables
-                        def exportLines = props.collect { k, v -> "export ${k.replace('.', '_')}='${v}'" }.join('\n')
-
-                        // Write the export statements to a file
-                        writeFile file: 'export-env.sh', text: exportLines
-
-                        // Use the exported env variables in your shell script
-                        sh '''
-                            source export-env.sh
-                            echo "Database Host: $db_host"
-                            echo "API URL: $api_url"
-                            echo "Monitoring Enabled: $monitor_enabled"
-
-                            ./deploy.sh \
-                              --db-host=$db_host \
-                              --db-user=$db_username \
-                              --schema=$db_schema \
-                              --api-url=$api_url \
-                              --api-version=$api_version
-                        '''
+                        
+                        // Debugging: Print the properties to ensure they are loaded correctly
+                        echo "Deploying to ${props['deploy.environment']} in ${props['deploy.region']}"
+                        echo "Using database: ${props['db.host']}:${props['db.port']}"
+                        
+                        // Use these properties in your deployment
+                        sh """
+                            echo "Starting deployment to ${props['db.host']} with schema ${props['db.schema']}"
+                            ./deploy.sh --db-host=${props['db.host']} --db-port=${props['db.port']} --api-url=${props['api.url']}
+                        """
                     }
                 }
             }
