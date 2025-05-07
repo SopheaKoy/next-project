@@ -101,26 +101,34 @@
 
 pipeline {
     agent any
+
+    environment {
+        CONFIG_FILE = credentials('test_config') // Injects file path
+    }
+
     stages {
-        stage('Deploy') {
+        stage('Load Properties') {
             steps {
-                // Load the managed configuration file
-                configFileProvider([configFile(fileId: '0c7f8326-8717-4be3-9e7c-818f1396b316', variable: 'ENV_CONFIG')]) {
-                    script {
-                        // Read the properties from the config file
-                        def props = readProperties file: "${ENV_CONFIG}"
-                        
-                        // Debugging: Print the properties to ensure they are loaded correctly
-                        echo "Deploying to ${props['deploy.environment']} in ${props['deploy.region']}"
-                        echo "Using database: ${props['db.host']}:${props['db.port']}"
-                        
-                        // Use these properties in your deployment
-                        sh """
-                            echo "Starting deployment to ${props['db.host']} with schema ${props['db.schema']}"
-                            ./deploy.sh --db-host=${props['db.host']} --db-port=${props['db.port']} --api-url=${props['api.url']}
-                        """
-                    }
+                script {
+                    echo "Reading properties from file..."
+
+                    def props = readProperties file: "${CONFIG_FILE}"
+
+                    // Set individual env vars if needed
+                    env.DB_HOST = props['db.host']
+                    env.DB_PORT = props['db.port']
+                    env.DB_USER = props['db.username']
+                    env.API_URL = props['api.url']
+                    env.MONITOR_ENABLED = props['monitor.enabled']
                 }
+            }
+        }
+
+        stage('Use Properties') {
+            steps {
+                echo "Database Host: ${env.DB_HOST}"
+                echo "API URL: ${env.API_URL}"
+                echo "Monitoring Enabled: ${env.MONITOR_ENABLED}"
             }
         }
     }
