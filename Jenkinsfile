@@ -1,15 +1,32 @@
 pipeline {
-    agent any
+    agent any  // This will use any available Jenkins agent
+    
     stages {
-        stage('Install') {
+        stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    // Run npm install to install dependencies
+                    sh 'npm install'
+                }
             }
         }
-        stage('Test') {
+        
+        stage('Run Tests') {
             steps {
-                sh 'npm test'
+                script {
+                    // Run npm test to execute tests
+                    sh 'npm test'
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and tests were successful!'
+        }
+        failure {
+            echo 'Build or tests failed. Please check the logs.'
         }
     }
 }
