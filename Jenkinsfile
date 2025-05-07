@@ -133,9 +133,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'dev'
-                    branch 'uat'
-                    branch 'prod'
-                    branch 'staging'
+                    branch 'dev-sophea'
                 }
             }
 
