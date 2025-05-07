@@ -106,7 +106,18 @@ pipeline {
         stage('Load Config') {
             steps {
                 // Use the correct File ID 'd06af51c-803a-47c8-a46b-9a77828ae001' for the app_config
-                configFileProvider([configFile(fileId: 'd06af51c-803a-47c8-a46b-9a77828ae001', variable: 'CONFIG_FILE')]) {}
+                configFileProvider([configFile(fileId: 'd06af51c-803a-47c8-a46b-9a77828ae001', variable: 'CONFIG_FILE')]) {
+                    script {
+                        // Print the filename (path where the file is stored in workspace)
+                        echo "The config file is located at: ${CONFIG_FILE}"
+                        
+                        // Optionally, you can also read the file if needed
+                        def props = readProperties file: "${CONFIG_FILE}"
+                        echo "Port: ${props['PORT']}"
+                        echo "Environment: ${props['ENV']}"
+                        echo "Database Host: ${props['DB_HOST']}"
+                    }
+                }
             }
         }
     }
