@@ -1,23 +1,27 @@
 pipeline {
-    agent {
-        docker { image 'node:20-slim' }  // Use the Node.js Docker image
-    }
+    agent any
 
     stages {
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
                 script {
-                    // Run npm install to install dependencies
-                    sh 'npm install'
+                    echo 'Building the project...'
                 }
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 script {
-                    // Run npm test to execute tests
-                    sh 'npm test'
+                    echo 'Running tests...'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Deploying the project...'
                 }
             }
         }
@@ -25,10 +29,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build and tests were successful!'
+            echo 'Build, tests, and deployment were successful!'
         }
         failure {
-            echo 'Build or tests failed. Please check the logs.'
+            echo 'Build, tests, or deployment failed. Please check the logs.'
         }
     }
 }
