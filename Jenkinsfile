@@ -105,9 +105,8 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                configFileProvider([configFile(fileId: 'test_config', variable: 'CONFIG_FILE')]) {
+                configFileProvider([configFile(fileId: '8256572f-9581-43d0-aca2-c66d4e443398', variable: 'CONFIG_FILE')]) {
                     script {
-                        // Now CONFIG_FILE is the path to the temp file
                         def props = readProperties file: "${CONFIG_FILE}"
                         echo "Database Host: ${props['db.host']}"
                         echo "API URL: ${props['api.url']}"
