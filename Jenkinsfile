@@ -105,23 +105,25 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                echo "read config from"
+                // Use the correct File ID 'd06af51c-803a-47c8-a46b-9a77828ae001' for the app_config
                 configFileProvider([configFile(fileId: 'd06af51c-803a-47c8-a46b-9a77828ae001', variable: 'CONFIG_FILE')]) {
                     script {
-                        // Read the properties file
-                        def props = readProperties file: "${CONFIG_FILE}"
-
-                        // Access the properties
-                        echo "PORT: ${props['PORT']}"
-                        echo "ENV: ${props['ENV']}"
-                        echo "DB_USER: ${props['DB_USER']}"
-                        echo "DB_PASS: ${props['DB_PASS']}"
-                        echo "DB_HOST: ${props['DB_HOST']}"
-                        echo "DB_SSL: ${props['DB_SSL']}"
+                        // Now CONFIG_FILE is the path to the temp file
+                        echo "Using config file at: ${CONFIG_FILE}"
+                        
+                        // Check if the file exists before attempting to read its properties
+                        if (fileExists(CONFIG_FILE)) {
+                            def props = readProperties file: "${CONFIG_FILE}"
+                            echo "Database Host: ${props['db.host']}"
+                            echo "API URL: ${props['api.url']}"
+                            echo "Database Username: ${props['db.username']}"
+                            echo "Database Password: ${props['db.password']}"
+                        } else {
+                            echo "Config file not found at: ${CONFIG_FILE}"
+                        }
                     }
                 }
             }
         }
     }
 }
-
