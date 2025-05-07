@@ -105,6 +105,7 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
+                echo "read config from"
                 configFileProvider([configFile(fileId: 'd06af51c-803a-47c8-a46b-9a77828ae001', variable: 'CONFIG_FILE')]) {
                     script {
                         // Read the properties file
