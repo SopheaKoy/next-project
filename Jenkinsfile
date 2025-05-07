@@ -105,13 +105,34 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                configFileProvider([configFile(fileId: '8256572f-9581-43d0-aca2-c66d4e443398', variable: 'CONFIG_FILE')]) {
+                configFileProvider([configFile(fileId: 'app_config', variable: 'CONFIG_FILE')]) {
                     script {
+                        // Load properties from the file
                         def props = readProperties file: "${CONFIG_FILE}"
-                        echo "Database Host: ${props['db.host']}"
-                        echo "API URL: ${props['api.url']}"
+                        
+                        // Assign default values if properties are missing
+                        def port = props['PORT'] ?: '3000'
+                        def env = props['ENV'] ?: 'dev'
+                        def dbUser = props['DB_USER'] ?: 'default_user'
+                        def dbPass = props['DB_PASS'] ?: 'default_password'
+                        def dbHost = props['DB_HOST'] ?: 'localhost'
+                        def dbSsl = props['DB_SSL'] ?: 'false'
+                        
+                        // Print the loaded values
+                        echo "PORT: ${port}"
+                        echo "ENV: ${env}"
+                        echo "DB_USER: ${dbUser}"
+                        echo "DB_PASS: ${dbPass}"
+                        echo "DB_HOST: ${dbHost}"
+                        echo "DB_SSL: ${dbSsl}"
                     }
                 }
+            }
+        }
+        
+        stage('Use Config') {
+            steps {
+                echo "Using PORT: ${PORT} and ENV: ${ENV}"
             }
         }
     }
