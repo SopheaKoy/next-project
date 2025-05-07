@@ -1,0 +1,8 @@
+PORT="3000"
+ENV="dev"
+
+DB_USER=""
+DB_PASS=""
+DB_HOST=""
+DB_PASS=""
+DB_SSL=""
