@@ -130,7 +130,7 @@ pipeline {
         stage('Build') {
             when {
                 anyOf {
-                    branch 'dev'
+                    
                     branch 'dev-sophea'
                 }
             }
