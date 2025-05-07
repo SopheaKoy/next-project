@@ -101,26 +101,45 @@
 
 pipeline {
     agent any
-
+    
     stages {
         stage('Load ENV') {
             steps {
-                withCredentials([file(credentialsId: 'env-config', variable: 'ENV_FILE')]) {
-                    sh '''
-                    echo "Loading env vars from $ENV_FILE..."
-                    set -a
-                    source "$ENV_FILE"
-                    set +a
-                    '''
+                script {
+                    // Load environment variables from the uploaded secret file
+                    withCredentials([file(credentialsId: 'env-config', variable: 'ENV_FILE')]) {
+                        // Load the env file (env_text.txt) to set environment variables
+                        sh '''
+                        echo "Loading env vars from $ENV_FILE..."
+                        set -a
+                        source "$ENV_FILE"
+                        set +a
+                        '''
+                    }
                 }
             }
         }
-
+        
         stage('Use ENV') {
             steps {
-                sh 'echo "Environment: $ENV"'
-                sh 'echo "Port: $PORT"'
+                script {
+                    // Now you can access the variables from the .env file
+                    echo "Application: ${env.APPLICATION}"
+                    echo "DB_USER: ${env.DB_USER}"
+                    echo "DB_PASS: ${env.DB_PASS}"
+                    echo "DB_HOST: ${env.DB_HOST}"
+                }
             }
         }
     }
+    
+    post {
+        success {
+            echo "Build succeeded!"
+        }
+        failure {
+            echo "Build failed!"
+        }
+    }
 }
+
