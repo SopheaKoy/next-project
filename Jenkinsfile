@@ -134,57 +134,13 @@ pipeline {
                     branch 'dev-sophea'
                 }
             }
-            
-            environment {
-                DOCKER_HOST = 'unix:///var/run/docker.sock'
-                DOCKER_BUILDKIT = '1'
-            }
-
             steps {
                 script {
-                    echo 'Running build stage...'
-                    sh '''
-                        apk add --no-cache git ca-certificates curl
-                        update-ca-certificates
-                        docker info
-                        echo "$DOCKER_REGISTRY_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_REGISTRY_USER" --password-stdin
-                        git config --global http.$CI_SERVER_HOST.extraheader "PRIVATE-TOKEN:$PERSONAL_ACCESS_TOKEN"
-                        chmod +x check_changes.sh
-                        ./check_changes.sh
-                        source build.env
-                        if [ "$REBUILD_NEEDED" = "true" ]; then
-                            chmod +x build.sh;
-                            ./build.sh;
-                        else
-                            echo "Skipping build as no changes detected in Dockerfile or requirements.txt";
-                        fi
-                    '''
+                    echo "Building on branch: ${env.BRANCH_NAME}"
+                    // Your build steps
                 }
             }
         }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Add your deploy commands here
-                    echo '============= Deploy ====================='
-                    echo "Branch name: ${env.GIT_BRANCH}"
-                    echo 'Deploying the application...'
-                }
-            }
-        }
-
-
-
-        stage('Notify') {
-            steps {
-                script {
-                    echo '============= Notify ====================='
-                    echo 'Sending notifications...'
-                    // Example: You can send email, Slack, etc.
-                    // For example, using Slack plugin:
-                }
-            }
-        }
+        // Add more stages (Deploy, Notify) as needed
     }
 }
