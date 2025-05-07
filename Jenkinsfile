@@ -102,10 +102,6 @@
 pipeline {
     agent any
 
-    environment {
-        // This will be loaded later from the file
-    }
-
     stages {
         stage('Load ENV') {
             steps {
