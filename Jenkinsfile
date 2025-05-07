@@ -105,20 +105,19 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                configFileProvider([configFile(fileId: 'd06af51c-803a-47c8-a46b-9a77828ae001', variable: 'CONFIG_FILE')]) {
+                configFileProvider([configFile(fileId: 'app_config', variable: 'CONFIG_FILE')]) {
                     script {
-                        // Load properties from the file
+                        // Use the readProperties step after configFileProvider
                         def props = readProperties file: "${CONFIG_FILE}"
                         
-                        // Assign default values if properties are missing
+                        // Default values if properties are missing
                         def port = props['PORT'] ?: '3000'
                         def env = props['ENV'] ?: 'dev'
                         def dbUser = props['DB_USER'] ?: 'default_user'
                         def dbPass = props['DB_PASS'] ?: 'default_password'
                         def dbHost = props['DB_HOST'] ?: 'localhost'
                         def dbSsl = props['DB_SSL'] ?: 'false'
-                        
-                        // Print the loaded values
+
                         echo "PORT: ${port}"
                         echo "ENV: ${env}"
                         echo "DB_USER: ${dbUser}"
