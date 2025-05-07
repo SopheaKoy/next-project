@@ -105,34 +105,22 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                configFileProvider([configFile(fileId: 'app_config', variable: 'CONFIG_FILE')]) {
+                configFileProvider([configFile(fileId: 'app-config', variable: 'CONFIG_FILE')]) {
                     script {
-                        // Use the readProperties step after configFileProvider
+                        // Read the properties file
                         def props = readProperties file: "${CONFIG_FILE}"
-                        
-                        // Default values if properties are missing
-                        def port = props['PORT'] ?: '3000'
-                        def env = props['ENV'] ?: 'dev'
-                        def dbUser = props['DB_USER'] ?: 'default_user'
-                        def dbPass = props['DB_PASS'] ?: 'default_password'
-                        def dbHost = props['DB_HOST'] ?: 'localhost'
-                        def dbSsl = props['DB_SSL'] ?: 'false'
 
-                        echo "PORT: ${port}"
-                        echo "ENV: ${env}"
-                        echo "DB_USER: ${dbUser}"
-                        echo "DB_PASS: ${dbPass}"
-                        echo "DB_HOST: ${dbHost}"
-                        echo "DB_SSL: ${dbSsl}"
+                        // Access the properties
+                        echo "PORT: ${props['PORT']}"
+                        echo "ENV: ${props['ENV']}"
+                        echo "DB_USER: ${props['DB_USER']}"
+                        echo "DB_PASS: ${props['DB_PASS']}"
+                        echo "DB_HOST: ${props['DB_HOST']}"
+                        echo "DB_SSL: ${props['DB_SSL']}"
                     }
                 }
             }
         }
-        
-        stage('Use Config') {
-            steps {
-                echo "Using PORT: ${PORT} and ENV: ${ENV}"
-            }
-        }
     }
 }
+
