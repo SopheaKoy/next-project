@@ -7,8 +7,6 @@
 //         VERSION = '1.0.0'
 //         SERVER_IP = '192.168.0.1'
 //         SERVICE_URL = 'http://example.com/service'
-//         TELEGRAM_BOT_TOKEN = '7773964856:AAF5igwKgWTd1xRPAroZ4RgS4SpKan5OQzw'  // Replace with your Telegram Bot Token
-//         TELEGRAM_CHAT_ID = '6465385844'  
 //     }
 
 //     stages {
