@@ -1,6 +1,8 @@
 pipeline {
-    agent any  // This will use any available Jenkins agent
-    
+    agent {
+        docker { image 'node:20-slim' }  // Use the Node.js Docker image
+    }
+
     stages {
         stage('Install Dependencies') {
             steps {
@@ -10,7 +12,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Run Tests') {
             steps {
                 script {
