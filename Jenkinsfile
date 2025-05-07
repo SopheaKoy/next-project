@@ -157,18 +157,8 @@ pipeline {
                     echo 'Sending notifications...'
                     // Example: You can send email, Slack, etc.
                     // For example, using Slack plugin:
-                    slackSend(channel: '#your-channel', message: 'Deployment complete')
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
