@@ -105,7 +105,7 @@ pipeline {
     stages {
         stage('Load Config') {
             steps {
-                configFileProvider([configFile(fileId: 'app-config', variable: 'CONFIG_FILE')]) {
+                configFileProvider([configFile(fileId: 'app_config', variable: 'CONFIG_FILE')]) {
                     script {
                         // Read the properties file
                         def props = readProperties file: "${CONFIG_FILE}"
