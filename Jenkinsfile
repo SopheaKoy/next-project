@@ -171,7 +171,7 @@ pipeline {
                 script {
                     // Add your deploy commands here
                     echo '============= Deploy ====================='
-                    echo 'Branch name: ${env.GIT_BRANCH}'
+                    echo "Branch name: ${env.GIT_BRANCH}"
                     echo 'Deploying the application...'
                 }
             }
