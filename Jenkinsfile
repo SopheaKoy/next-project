@@ -99,7 +99,6 @@
 //     return status == 'SUCCESS' ? '✅' : '❌'
 // }
 
-
 pipeline {
     agent any
 
