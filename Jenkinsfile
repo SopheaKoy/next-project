@@ -131,6 +131,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'dev'
+                    branch 'dev-sophea'
                 }
             }
 
@@ -162,7 +163,7 @@ pipeline {
         }
 
 
-        
+
 
         stage('Deploy') {
             steps {
