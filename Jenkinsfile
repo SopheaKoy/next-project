@@ -137,12 +137,6 @@ pipeline {
                     branch 'staging'
                 }
             }
-            agent {
-                docker {
-                    image 'docker:26.1.4-alpine3.20'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
             environment {
                 DOCKER_HOST = 'unix:///var/run/docker.sock'
                 DOCKER_BUILDKIT = '1'
