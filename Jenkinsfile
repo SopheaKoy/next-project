@@ -128,21 +128,48 @@ pipeline {
     agent any
 
     stages {
-        stage('Setup') {
-            steps {
-                script {
-                    echo "==== Starting Setup Stage ===="
-                    echo "Setting up environment variables..."
-                }
-            }
-        }
         stage('Build') {
             steps {
                 script {
-                    echo "==== Build Stage ===="
-                    echo "Compiling project..."
+                    // Add your build commands here
+                    echo '============= build ====================='
+                    echo 'Building the application...'
+                    // Example: sh 'npm install' or any other build command
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Add your deploy commands here
+                    echo '============= Deploy ====================='
+                    echo 'Deploying the application...'
+                    // Example: sh './deploy.sh' or any other deployment command
+                }
+            }
+        }
+
+        stage('Notify') {
+            steps {
+                script {
+                    echo '============= Notify ====================='
+                    echo 'Sending notifications...'
+                    // Example: You can send email, Slack, etc.
+                    // For example, using Slack plugin:
+                    slackSend(channel: '#your-channel', message: 'Deployment complete')
                 }
             }
         }
     }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
 }
+
