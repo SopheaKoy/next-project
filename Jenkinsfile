@@ -108,8 +108,8 @@ pipeline {
                 script {
                     // Use the Secret file credential with ID 'env-config'
                     withCredentials([file(credentialsId: 'env-config', variable: 'ENV_FILE')]) {
-                        // Load the content of the file into environment variables using bash
-                        echo "Loading environment variables from $ENV_FILE"
+                        // Do not expose the ENV_FILE directly in logs.
+                        echo "Loading environment variables from the file."
                         sh '''
                         # Use bash explicitly to ensure 'source' command works
                         bash -c "set -a; source $ENV_FILE; set +a"
@@ -124,11 +124,11 @@ pipeline {
                 script {
                     // Now you can access the variables from the secret file
                     echo "Environment variables loaded successfully."
-                    echo "Application: ${env.APPLICATION}"
-                    echo "DB User: ${env.DB_USER}"
-                    echo "DB Host: ${env.DB_HOST}"
+                    echo "Application: ${env.APPLICATION}" // Do not log sensitive information
+                    echo "DB User: ${env.DB_USER}"  // Avoid logging sensitive data
                 }
             }
         }
     }
 }
+
