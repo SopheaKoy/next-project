@@ -23,8 +23,8 @@ pipeline {
                         sh "${scannerHome}/bin/sonar-scanner" +
                            " -Dsonar.projectKey=my_project_key" +
                            " -Dsonar.sources=." +
-                           " -Dsonar.host.url=${SONAR_HOST_URL}" +
-                           " -Dsonar.login=\${SONAR_TOKEN}"  // Escaped to prevent Groovy interpolation
+                           " -Dsonar.host.url=${env.SONAR_HOST_URL}" +
+                           " -Dsonar.login=${env.SONAR_TOKEN}"  // Escaped to prevent Groovy interpolation
                     }
                 }
             }
