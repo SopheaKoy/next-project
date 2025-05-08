@@ -122,33 +122,20 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
 
-    stages {
-        stage('Build') {
-            when {
-                anyOf {
-                    branch 'dev'
-                    branch 'dev-sophea'
-                }
-            }
-            
-            steps {
-                script {
-                    echo "Building on branch: ${env.BRANCH_NAME}"
-                    // Your build steps
-                }
-            }
-        }
-        // Add more stages (Deploy, Notify) as needed
+    tools {
+        sonarScanner 'SonarScanner' // Must match Jenkins tool name
     }
-}
-pipeline {
-    agent any
+
+    environment {
+        SONAR_TOKEN = credentials('sonarqube-token') // Secure token
+    }
 
     stages {
-        stage('Build') {
+        stage('Build and SonarQube Analysis') {
             when {
                 anyOf {
                     branch 'dev'
@@ -157,11 +144,31 @@ pipeline {
             }
             steps {
                 script {
-                    echo "Building on branch: ${env.BRANCH_NAME}"
-                    // Your build steps
+                    echo "Building and analyzing on branch: ${env.BRANCH_NAME}"
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=my_project_key \
+                                -Dsonar.sources=. \
+                                -Dsonar.login=$SONAR_TOKEN
+                        """
+                    }
                 }
             }
         }
-        // Add more stages (Deploy, Notify) as needed
+
+        stage('Quality Gate') {
+            when {
+                anyOf {
+                    branch 'dev'
+                    branch 'dev-sophea'
+                }
+            }
+            steps {
+                timeout(time: 3, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 }
