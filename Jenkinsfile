@@ -128,11 +128,11 @@ pipeline {
     agent any
 
     tools {
-        sonarScanner 'SonarScanner' // Must match Jenkins tool name
+        sonarScanner 'SonarScanner'  // Match the name in Global Tool Configuration
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-token') // Secure token
+        SONAR_TOKEN = credentials('sonarqube-token')  // Secure token from Jenkins credentials
     }
 
     stages {
@@ -146,6 +146,7 @@ pipeline {
             steps {
                 script {
                     echo "Building and analyzing on branch: ${env.BRANCH_NAME}"
+
                     withSonarQubeEnv('SonarQube') {
                         sh """
                             sonar-scanner \
