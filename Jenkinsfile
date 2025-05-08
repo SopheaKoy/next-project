@@ -19,12 +19,9 @@ pipeline {
 
                     def scannerHome = tool 'SonarScanner'
                     withSonarQubeEnv('SonarQube') {
-                        // Use environment variable injection instead of string interpolation for secrets
-                        sh "${scannerHome}/bin/sonar-scanner" +
-                           " -Dsonar.projectKey=my_project_key" +
-                           " -Dsonar.sources=." +
-                           " -Dsonar.host.url=${env.SONAR_HOST_URL}" +
-                           " -Dsonar.login=${env.SONAR_TOKEN}"  // Escaped to prevent Groovy interpolation
+                        // Use existing sonar-project.properties file in the repository
+                        // Only pass the authentication token securely
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=\${SONAR_TOKEN}"
                     }
                 }
             }
