@@ -1,0 +1,30 @@
+- name: Remote to the server and perform tasks
+  hosts: server
+  become: true  # Use sudo for privileged tasks
+  tasks:
+    - name: Check if nginx is installed
+      command: nginx -v
+      register: nginx_version
+      ignore_errors: true  # Continue even if nginx is not installed
+
+    - name: Show nginx version if installed
+      debug:
+        msg: "Nginx version is {{ nginx_version.stderr }}"
+      when: nginx_version.rc == 0  # Only show if nginx is installed
+
+    - name: Install nginx if not installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+      when: nginx_version.rc != 0  # Only install if nginx is not installed
+
+    - name: Ensure nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Show environment variable
+      debug:
+        msg: "The environment is {{ env }}"
