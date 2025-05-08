@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Change from sonarScanner to SonarRunnerInstallation
-        SonarRunnerInstallation 'SonarScanner' // This should match the name in Global Tool Configuration
-    }
-
     environment {
         SONAR_TOKEN = credentials('sonarqube-token') // Secure token from Jenkins credentials
     }
@@ -22,12 +17,14 @@ pipeline {
                 script {
                     echo "Building and analyzing on branch: ${env.BRANCH_NAME}"
 
+                    def scannerHome = tool 'SonarScanner'
                     withSonarQubeEnv('SonarQube') {
                         sh """
-                            sonar-scanner \
+                            ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=my_project_key \
                                 -Dsonar.sources=. \
-                                -Dsonar.login=$SONAR_TOKEN
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=${SONAR_TOKEN}
                         """
                     }
                 }
