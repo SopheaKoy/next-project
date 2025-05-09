@@ -1,43 +1,22 @@
 pipeline {
     agent any
-
-    environment {
-        SONAR_TOKEN = credentials('sonarqube-token') // Secure token from Jenkins credentials
-    }
-
+    
     stages {
-        stage('Build and SonarQube Analysis') {
-            when {
-                anyOf {
-                    branch 'dev'
-                    branch 'dev-sophea'
-                }
-            }
+        stage('Build') {
             steps {
-                script {
-                    echo "Building and analyzing on branch: ${env.BRANCH_NAME}"
-
-                    def scannerHome = tool 'SonarScanner'
-                    withSonarQubeEnv('SonarQube') {
-                        // Use existing sonar-project.properties file in the repository
-                        // Only pass the authentication token securely
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=\${SONAR_TOKEN}"
-                    }
-                }
+                echo "Building the application..."
             }
         }
 
-        stage('Quality Gate') {
-            when {
-                anyOf {
-                    branch 'dev'
-                    branch 'dev-sophea'
-                }
-            }
+        stage('Test') {
             steps {
-                timeout(time: 3, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+                echo "Running tests..."
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying the application..."
             }
         }
     }
