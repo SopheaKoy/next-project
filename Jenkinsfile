@@ -10,6 +10,7 @@ pipeline {
 
         stage('Test') {
             steps {
+                echo "========================="
                 echo "Running tests..."
             }
         }
