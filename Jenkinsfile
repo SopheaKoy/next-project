@@ -22,5 +22,13 @@ pipeline {
                 echo "Deploying the application..."
             }
         }
+
+         stage('Scann') {
+            steps {
+                echo "========================="
+                echo "Scanner the application..."
+            }
+        }
+
     }
 }
