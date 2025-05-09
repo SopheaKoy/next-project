@@ -129,18 +129,6 @@ pipeline {
 
     stages {
         stage('Build') {
-            when {
-                anyOf {
-                    branch 'dev-sophea'
-                    branch 'dev'
-                }
-            }
-
-            environment {
-                DOCKER_HOST = 'unix:///var/run/docker.sock'
-                DOCKER_BUILDKIT = '1'
-            }
-
             steps {
                 script {
                     // Add your deploy commands here
@@ -156,7 +144,7 @@ pipeline {
                 script {
                     // Add your deploy commands here
                     echo '============= Deploy ====================='
-                    echo "Branch name: ${env.GIT_BRANCH}"
+                    echo "Branch name: ${env.BRANCH_NAME}"
                     echo 'Deploying the application...'
                 }
             }
