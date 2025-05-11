@@ -5,15 +5,11 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 export default function NavbarComponent(){
-    const [isActive, setActivce]      = useState(false);
+    
     const [isChecked, setIsChecked]   = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
 
     const pathname = usePathname();
-
-    
-
-    console.log(isChecked);
     
     return (
         <>
