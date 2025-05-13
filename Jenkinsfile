@@ -36,9 +36,6 @@ pipeline {
             }
         }
 
-
-        
-
         stage('Deploy') {
             when {
                 expression { return env.CAN_DEPLOY == "true" }
