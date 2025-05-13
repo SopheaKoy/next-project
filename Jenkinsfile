@@ -22,7 +22,7 @@ pipeline {
                     if (env.BRANCH_NAME == 'dev-sophea') {
                         echo "Branch is 'dev-sophea' — requires manual deployment trigger"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
-                        
+
                         if (env.CAN_DEPLOY == "false") {
                             echo "⚠️  Deployment blocked. Please run with MANUAL_DEPLOY=true"
                         }
@@ -37,6 +37,9 @@ pipeline {
         }
 
         stage('Build') {
+            when {
+                expression { return env.CAN_DEPLOY == "true" }
+            }
             steps {
                 echo '============= Build ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
