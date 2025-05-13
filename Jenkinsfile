@@ -13,15 +13,16 @@ pipeline {
     }
 
     stages {
+
         stage('Determine Deployment Type') {
             steps {
                 script {
-                    // Initialize default deployment settings
                     env.CAN_DEPLOY = "false"
                     env.TARGET_ENV = "none"
 
-                    // Check if branch is dev-sophea (requires manual deployment)
-                    if (env.BRANCH_NAME == 'dev-sophea') {
+                    def autoDeployBranches = ['prod', 'staging', 'uat']
+
+                    if (env.BRANCH_NAME == 'dev') {
                         echo "Branch is 'dev-sophea' — manual deployment required"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
                         env.TARGET_ENV = "development"
@@ -29,12 +30,27 @@ pipeline {
                         if (env.CAN_DEPLOY == "false") {
                             echo "⚠️  Manual deployment blocked. Please check MANUAL_DEPLOY=true in the Jenkins UI."
                         }
-                    }
-                    // Auto-deploy for other branches like dev, main, etc.
-                    else {
-                        echo "Branch '${env.BRANCH_NAME}' — auto-deploy triggered."
+
+                    } else if (autoDeployBranches.contains(env.BRANCH_NAME)) {
+                        echo "Branch '${env.BRANCH_NAME}' — auto-deploy enabled."
                         env.CAN_DEPLOY = "true"
-                        env.TARGET_ENV = "staging"  // or production, depending on the branch
+
+                        switch (env.BRANCH_NAME) {
+                            case 'dev':
+                                env.TARGET_ENV = "development"
+                                break
+                            case 'prod':
+                                env.TARGET_ENV = "prod"
+                                break
+                            case 'staging':
+                                env.TARGET_ENV = "staging"
+                                break
+                            case 'uat':
+                                env.TARGET_ENV = "uat"
+                                break
+                        }
+                    } else {
+                        echo "🛑 Branch '${env.BRANCH_NAME}' is not allowed to deploy. Skipping deployment."
                     }
 
                     echo "CAN_DEPLOY: ${env.CAN_DEPLOY}"
@@ -42,6 +58,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Deploy') {
             when {
@@ -51,7 +68,6 @@ pipeline {
                 echo '============= Deploy ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
                 echo "Deploying to ${env.TARGET_ENV} environment"
-                // Add actual deployment commands here (e.g., docker, kubernetes, etc.)
                 echo '============= END ====================='
             }
         }
