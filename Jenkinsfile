@@ -23,7 +23,7 @@ pipeline {
                     def autoDeployBranches = ['prod', 'staging', 'uat']
 
                     if (env.BRANCH_NAME == 'dev') {
-                        echo "Branch is 'dev-sophea' — manual deployment required"
+                        echo "Branch is 'dev' — manual deployment required"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
                         env.TARGET_ENV = "development"
 
