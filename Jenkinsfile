@@ -36,30 +36,8 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            when {
-                expression { return env.CAN_DEPLOY == "true" }
-            }
-            steps {
-                echo '============= Build ====================='
-                echo "Branch name: ${env.BRANCH_NAME}"
-                sh 'echo "Building the application..."'
-                echo '============= END ====================='
-            }
-        }
 
-        stage('Tests') {
-            when {
-                expression { return env.CAN_DEPLOY == "true" }
-            }
-            steps {
-                echo '============= Testing ====================='
-                sh 'echo "Running tests..."'
-                // Add actual test commands here
-                // sh 'npm test'
-                echo '============= END ====================='
-            }
-        }
+        
 
         stage('Deploy') {
             when {
