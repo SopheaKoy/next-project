@@ -49,6 +49,9 @@ pipeline {
         }
 
         stage('Tests') {
+            when {
+                expression { return env.CAN_DEPLOY == "true" }
+            }
             steps {
                 echo '============= Testing ====================='
                 sh 'echo "Running tests..."'
