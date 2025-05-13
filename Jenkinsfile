@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     parameters {
-        booleanParam(name: 'MANUAL_DEPLOY', defaultValue: false, description: 'Check this to manually trigger deployment')
+        // Manual deploy checkbox
+        booleanParam(name: 'MANUAL_DEPLOY', defaultValue: false, description: 'Check to manually trigger deployment for dev-sophea branch')
     }
 
     options {
@@ -15,28 +16,25 @@ pipeline {
         stage('Determine Deployment Type') {
             steps {
                 script {
+                    // Initialize default deployment settings
                     env.CAN_DEPLOY = "false"
                     env.TARGET_ENV = "none"
 
-                    // Handle manual deployment for 'dev-sophea' branch
+                    // Check if branch is dev-sophea (requires manual deployment)
                     if (env.BRANCH_NAME == 'dev-sophea') {
                         echo "Branch is 'dev-sophea' — manual deployment required"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
                         env.TARGET_ENV = "development"
 
                         if (env.CAN_DEPLOY == "false") {
-                            echo "⚠️  Manual deployment blocked. Please run with MANUAL_DEPLOY=true"
+                            echo "⚠️  Manual deployment blocked. Please check MANUAL_DEPLOY=true in the Jenkins UI."
                         }
-                    } 
-                    // Handle 'master' branch deployment
-                    else if (env.BRANCH_NAME == 'master' && params.MANUAL_DEPLOY) {
-                        echo "Branch is 'master' — manual deployment triggered"
-                        env.CAN_DEPLOY = "true"
-                        env.TARGET_ENV = "production"
                     }
-                    // Default case when not a deployable branch
+                    // Auto-deploy for other branches like dev, main, etc.
                     else {
-                        echo "Branch '${env.BRANCH_NAME}' is not configured for deployment."
+                        echo "Branch '${env.BRANCH_NAME}' — auto-deploy triggered."
+                        env.CAN_DEPLOY = "true"
+                        env.TARGET_ENV = "staging"  // or production, depending on the branch
                     }
 
                     echo "CAN_DEPLOY: ${env.CAN_DEPLOY}"
@@ -53,6 +51,7 @@ pipeline {
                 echo '============= Deploy ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
                 echo "Deploying to ${env.TARGET_ENV} environment"
+                // Add actual deployment commands here (e.g., docker, kubernetes, etc.)
                 echo '============= END ====================='
             }
         }
