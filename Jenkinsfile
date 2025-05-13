@@ -20,6 +20,7 @@ pipeline {
                     echo '============= Deploy ====================='
                     echo "Branch name: ${env.BRANCH_NAME}"
                     echo 'Deploying the application...'
+                    echo '============= END ====================='
                 }
             }
         }
@@ -32,6 +33,7 @@ pipeline {
                     echo 'Sending notifications...'
                     // Example: You can send email, Slack, etc.
                     // For example, using Slack plugin:
+                    echo '============= END ====================='
                 }
             }
         }
