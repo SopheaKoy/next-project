@@ -15,13 +15,14 @@ pipeline {
         stage('Determine Deployment Type') {
             steps {
                 script {
-                    
+                    // Default deploy condition
                     env.CAN_DEPLOY = "false"
                     env.TARGET_ENV = "none"
 
                     if (env.BRANCH_NAME == 'dev-sophea') {
                         echo "Branch is 'dev-sophea' — requires manual deployment trigger"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
+                        env.TARGET_ENV = "development"
 
                         if (env.CAN_DEPLOY == "false") {
                             echo "⚠️  Deployment blocked. Please run with MANUAL_DEPLOY=true"
@@ -44,6 +45,7 @@ pipeline {
                 echo '============= Deploy ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
                 echo "Deploying to ${env.TARGET_ENV} environment"
+                // Place your actual deployment commands here, e.g., Docker or Kubernetes deploy commands
                 echo '============= END ====================='
             }
         }
