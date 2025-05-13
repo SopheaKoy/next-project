@@ -16,22 +16,22 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            when {
-                expression { return params.RUN_PIPELINE }
-            }
-            steps {
-                checkout scm
-                script {
-                    // Verify we're on the right branch
-                    def currentBranch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    echo "Current branch: ${currentBranch}"
-                    if (currentBranch != params.TARGET_BRANCH) {
-                        error("Expected to be on branch '${params.TARGET_BRANCH}' but found '${currentBranch}'")
-                    }
-                }
-            }
-        }
+        // stage('Checkout') {
+        //     when {
+        //         expression { return params.RUN_PIPELINE }
+        //     }
+        //     steps {
+        //         checkout scm
+        //         script {
+        //             // Verify we're on the right branch
+        //             def currentBranch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+        //             echo "Current branch: ${currentBranch}"
+        //             if (currentBranch != params.TARGET_BRANCH) {
+        //                 error("Expected to be on branch '${params.TARGET_BRANCH}' but found '${currentBranch}'")
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build') {
             when {
