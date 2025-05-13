@@ -15,44 +15,28 @@ pipeline {
         stage('Determine Deployment Type') {
             steps {
                 script {
-                    // Set environment variables for deployment configuration
-                    env.AUTO_DEPLOY = "false"
+                    // Default: block deployment
                     env.CAN_DEPLOY = "false"
-                    env.TARGET_ENV = "unknown"
-                    
-                    // Branches that auto-deploy
-                    if (env.BRANCH_NAME == 'dev-sophea' || env.BRANCH_NAME =~ /^feature\/.*$/) {
-                        echo "Branch '${env.BRANCH_NAME}' is configured for automatic deployment"
-                        env.AUTO_DEPLOY = "true"
-                        env.CAN_DEPLOY = "true"
-                        env.TARGET_ENV = "development"
-                    } 
-                    // Branches that require manual approval
-                    else if (env.BRANCH_NAME == 'dev-sophea' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME =~ /^release\/.*$/) {
-                        echo "Branch '${env.BRANCH_NAME}' requires manual deployment approval"
-                        env.AUTO_DEPLOY = "false"
+                    env.TARGET_ENV = "none"
+
+                    if (env.BRANCH_NAME == 'dev-sophea') {
+                        echo "Branch is 'dev-sophea' — requires manual deployment trigger"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
-                        
-                        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main') {
-                            env.TARGET_ENV = "production"
-                        } else {
-                            env.TARGET_ENV = "staging"
-                        }
-                        
+                        env.TARGET_ENV = "development"
+
                         if (env.CAN_DEPLOY == "false") {
-                            echo "To deploy this branch, run the build with MANUAL_DEPLOY=true parameter"
+                            echo "⚠️  Deployment blocked. Please run with MANUAL_DEPLOY=true"
                         }
-                    } 
-                    // Not a deployable branch
-                    else {
-                        echo "Branch '${env.BRANCH_NAME}' is not configured for deployment"
-                        env.AUTO_DEPLOY = "false"
-                        env.CAN_DEPLOY  = "false"
+                    } else {
+                        echo "Branch '${env.BRANCH_NAME}' is not allowed to deploy."
                     }
+
+                    echo "CAN_DEPLOY: ${env.CAN_DEPLOY}"
+                    echo "TARGET_ENV: ${env.TARGET_ENV}"
                 }
             }
         }
-
+        
         stage('Build') {
             steps {
                 echo '============= Build ====================='
