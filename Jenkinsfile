@@ -28,7 +28,7 @@ pipeline {
                         env.TARGET_ENV = "development"
                     } 
                     // Branches that require manual approval
-                    else if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME =~ /^release\/.*$/) {
+                    else if (env.BRANCH_NAME == 'dev-sophea' || env.BRANCH_NAME == 'main' || env.BRANCH_NAME =~ /^release\/.*$/) {
                         echo "Branch '${env.BRANCH_NAME}' requires manual deployment approval"
                         env.AUTO_DEPLOY = "false"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
@@ -47,7 +47,7 @@ pipeline {
                     else {
                         echo "Branch '${env.BRANCH_NAME}' is not configured for deployment"
                         env.AUTO_DEPLOY = "false"
-                        env.CAN_DEPLOY = "false"
+                        env.CAN_DEPLOY  = "false"
                     }
                 }
             }
@@ -58,10 +58,6 @@ pipeline {
                 echo '============= Build ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
                 sh 'echo "Building the application..."'
-                // Add actual build steps here based on your application
-                // For example:
-                // sh 'npm install'
-                // sh 'npm run build'
                 echo '============= END ====================='
             }
         }
@@ -84,28 +80,6 @@ pipeline {
                 echo '============= Deploy ====================='
                 echo "Branch name: ${env.BRANCH_NAME}"
                 echo "Deploying to ${env.TARGET_ENV} environment"
-                
-                script {
-                    // Environment-specific deployment logic
-                    switch(env.TARGET_ENV) {
-                        case 'development':
-                            sh 'echo "Deploying to development server..."'
-                            // sh './deploy.sh dev'
-                            break
-                        case 'staging':
-                            sh 'echo "Deploying to staging server..."'
-                            // sh './deploy.sh staging'
-                            break
-                        case 'production':
-                            // Additional confirmation for production even if manually triggered
-                            input message: 'Confirm production deployment?', ok: 'Deploy'
-                            sh 'echo "Deploying to production server..."'
-                            // sh './deploy.sh production'
-                            break
-                        default:
-                            error "Unknown deployment environment: ${env.TARGET_ENV}"
-                    }
-                }
                 echo '============= END ====================='
             }
         }
@@ -119,23 +93,6 @@ pipeline {
                 script {
                     def deploymentStatus = currentBuild.result ?: 'SUCCESS'
                     echo "Deployment status: ${deploymentStatus} to ${env.TARGET_ENV}"
-                    
-                    // Add notification steps if needed
-                    // For example:
-                    // emailext(
-                    //     subject: "Deployment to ${env.TARGET_ENV} - ${deploymentStatus}",
-                    //     body: """
-                    //         Deployment to ${env.TARGET_ENV} environment completed with status: ${deploymentStatus}
-                    //         
-                    //         Branch: ${env.BRANCH_NAME}
-                    //         Build URL: ${env.BUILD_URL}
-                    //     """,
-                    //     to: "your-team@example.com"
-                    // )
-                    
-                    // slackSend channel: '#deployments', 
-                    //     color: deploymentStatus == 'SUCCESS' ? 'good' : 'danger', 
-                    //     message: "Deployment to ${env.TARGET_ENV} - ${deploymentStatus}"
                 }
                 echo '============= END ====================='
             }
