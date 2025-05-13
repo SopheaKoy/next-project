@@ -25,7 +25,7 @@ pipeline {
                     if (env.BRANCH_NAME == 'dev') {
                         echo "Branch is 'dev' — manual deployment required"
                         env.CAN_DEPLOY = params.MANUAL_DEPLOY ? "true" : "false"
-                        env.TARGET_ENV = "development"
+                        env.TARGET_ENV = "dev"
 
                         if (env.CAN_DEPLOY == "false") {
                             echo "⚠️  Manual deployment blocked. Please check MANUAL_DEPLOY=true in the Jenkins UI."
@@ -36,9 +36,6 @@ pipeline {
                         env.CAN_DEPLOY = "true"
 
                         switch (env.BRANCH_NAME) {
-                            case 'dev':
-                                env.TARGET_ENV = "development"
-                                break
                             case 'prod':
                                 env.TARGET_ENV = "prod"
                                 break
