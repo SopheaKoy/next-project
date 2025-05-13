@@ -61,7 +61,7 @@ pipeline {
 
 
         stage('Deploy') {
-            when {
+            when { 
                 expression { return env.CAN_DEPLOY == "true" }
             }
             steps {
@@ -73,7 +73,7 @@ pipeline {
         }
 
         stage('Notify') {
-            when {
+            when { 
                 expression { return env.CAN_DEPLOY == "true" }
             }
             steps {
