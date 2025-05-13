@@ -15,7 +15,7 @@ pipeline {
         stage('Determine Deployment Type') {
             steps {
                 script {
-                    // Default: block deployment
+                    
                     env.CAN_DEPLOY = "false"
                     env.TARGET_ENV = "none"
 
