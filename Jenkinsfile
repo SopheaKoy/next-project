@@ -12,7 +12,7 @@ pipeline {
         skipDefaultCheckout()
         timeout(time: 60, unit: 'MINUTES')
         disableConcurrentBuilds()
-        ansiColor('xterm')
+        timestamps()
     }
 
     stages {
