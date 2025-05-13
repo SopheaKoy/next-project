@@ -4,7 +4,7 @@ pipeline {
     parameters {
         booleanParam(name: 'RUN_PIPELINE', defaultValue: false, description: 'Check to manually run Build + Deploy + Notify')
         string(name: 'TARGET_BRANCH', defaultValue: 'dev-sophea', description: 'Branch to deploy from')
-        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Deployment environment')
+        // choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Deployment environment')
         string(name: 'NOTIFY_EMAIL', defaultValue: '', description: 'Email address for notifications (optional)')
     }
 
