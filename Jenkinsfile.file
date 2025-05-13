@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'DEPLOY_TO_PROD', defaultValue: false, description: 'Deploy to production?')
+    }
+
+    stages {
+        stage('Build') {
+            when {
+                anyOf {
+                    branch 'dev'
+                    branch 'uat'
+                    branch 'prod'
+                }
+            }
+            steps {
+                echo "Building branch ${env.BRANCH_NAME}"
+                // your build logic
+            }
+        }
+
+        stage('Test') {
+            when {
+                anyOf {
+                    branch 'dev'
+                    branch 'uat'
+                }
+            }
+            steps {
+                echo "Testing branch ${env.BRANCH_NAME}"
+                // your test logic
+            }
+        }
+
+        stage('Deploy to UAT') {
+            when {
+                branch 'uat'
+            }
+            steps {
+                echo "Deploying to UAT"
+                // UAT deploy logic
+            }
+        }
+
+        stage('Deploy to Prod') {
+            when {
+                allOf {
+                    branch 'prod'
+                    expression { return params.DEPLOY_TO_PROD }
+                }
+            }
+            steps {
+                echo "Deploying to Production!"
+                // Production deploy logic
+            }
+        }
+    }
+}
